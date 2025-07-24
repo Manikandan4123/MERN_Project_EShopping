@@ -2,8 +2,6 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import Canvas from "./Canvas";
 
-
-
 const Navbar = ({ cats, selectedCat, onCategoryChange, cartCount }) => {
   return (
     <nav style={{

@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const User = require('./UserModel');
+const bcrypt = require('bcrypt');
+
 
 const app = express();
 app.use(cors());
@@ -23,12 +25,12 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
-
   if (!user) {
     return res.status(400).json({ message: 'User not found. Please sign up.' });
   }
 
-  if (user.password !== password) {
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
     return res.status(401).json({ message: 'Incorrect password' });
   }
 
@@ -37,21 +39,26 @@ app.post('/login', async (req, res) => {
 
 
 
+
 // 📝 Signup Route
+
+const saltRounds = 10;
+
 app.post('/signup', async (req, res) => {
   const { username, password } = req.body;
 
   const existingUser = await User.findOne({ username });
-
   if (existingUser) {
     return res.status(400).json({ message: 'Username already exists' });
   }
 
-  const newUser = new User({ username, password });
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const newUser = new User({ username, password: hashedPassword });
   await newUser.save();
 
   res.json({ message: 'Account created successfully' });
 });
+
 
 
 // ✅ Start Server

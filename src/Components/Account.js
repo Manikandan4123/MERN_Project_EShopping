@@ -32,7 +32,7 @@ export default function Account({ handleClose }) {
       setMessage(res.data.message);
 
       if (res.data.message === 'Login successful') {
-        localStorage.setItem('username', res.data.username); // ✅ FIXED
+        localStorage.setItem('username', res.data.username); // Save Username to Local Storage
         setIsLoggedIn(true);
         setShowForm(false);
       }
